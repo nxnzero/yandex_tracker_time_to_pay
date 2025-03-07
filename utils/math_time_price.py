@@ -1,34 +1,33 @@
-HOURS_IN_ONE_WEAK = '40'
-HOURS_IN_ONE_DAY = '8'
+import re
+
+HOURS_IN_ONE_WEAK = '2400'
+HOURS_IN_ONE_DAY = '480'
 
 
-def convert_time(time : str) -> int:
+def convert_time(time: str):
     time = time.replace('PT', '')
+    time = time.replace('P', '')
 
-    if 'W' in time:
-        time = time.replace('W', f' * {HOURS_IN_ONE_WEAK} + ')
-        time = time.replace('T', '')
-        time = time.replace('P', '')
-    if "DT" in time:
-        time = time.replace('DT', f' * {HOURS_IN_ONE_DAY} + ')
-        time = time.replace('T', '')
-        time = time.replace('P', '')
+    total_minutes = 0
 
-    if 'H' in time:
-        time = time.replace('H', ' * 60 + ')
-        time = time.replace('T', '')
-        time = time.replace('P', '')
+    weeks = re.search(r'(\d+)W', time)
+    if weeks:
+        total_minutes += int(weeks.group(1)) * int(HOURS_IN_ONE_WEAK)
 
-    if 'M' in time:
-        time = time.replace('M', '')
-        time = time.replace('T', '')
-        time = time.replace('P', '')
+    days = re.search(r'(\d+)D', time)
+    if days:
+        total_minutes += int(days.group(1)) * int(HOURS_IN_ONE_DAY)
 
-    if time.endswith(' + '):
-        time = time[:-3]
+    hours = re.search(r'(\d+)H', time)
+    if hours:
+        total_minutes += int(hours.group(1)) * 60
 
-    return eval(time)
+    minutes = re.search(r'(\d+)M', time)
+    if minutes:
+        total_minutes += int(minutes.group(1))
+
+    return total_minutes
 
 
 def math_price(price_per_hour, issue_spent_time):
-    return int(price_per_hour * (issue_spent_time // 60)) # Заменить на // если нужно делить без остатка
+    return int(issue_spent_time * price_per_hour / 60) # Заменить на // если нужно делить без остатка
