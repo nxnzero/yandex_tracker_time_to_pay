@@ -1,3 +1,4 @@
+import math
 import re
 
 HOURS_IN_ONE_WEAK = '2400'
@@ -30,4 +31,5 @@ def convert_time(time: str):
 
 
 def math_price(price_per_hour, issue_spent_time):
-    return int(issue_spent_time * price_per_hour / 60) # Заменить на // если нужно делить без остатка
+    result = issue_spent_time * price_per_hour / 60
+    return round(result)
